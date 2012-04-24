@@ -1,0 +1,8 @@
+INTSTYLE=ise
+INFILE=C:\proyectos_xilinx\zx_spectrum_48k\tld_spartan3_sp48k.ncd
+OUTFILE=C:\proyectos_xilinx\zx_spectrum_48k\tld_spartan3_sp48k.bit
+FAMILY=Spartan3
+PART=xc3s1000-4ft256
+WORKINGDIR=C:\proyectos_xilinx\zx_spectrum_48k
+LICENSE=WebPack
+USER_INFO=0_0_433
