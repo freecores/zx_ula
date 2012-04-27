@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company:        Dept. Architecture and Computing Technology. University of Seville
-// Engineer:       Miguel Angel Rodriguez Jodar. rodriguj@atc.us.es
+// Engineer:       Miguel Angel Rodriguez Jodar
 // 
 // Create Date:    19:13:39 4-Apr-2012 
-// Design Name:    ZX Spectrum
-// Module Name:    ula 
+// Design Name:    ULA
+// Module Name:    ula_reference_design 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -14,8 +14,8 @@
 // Dependencies: 
 //
 // Revision: 
-// Revision 1.00 - File Created
-// Additional Comments: GPL License policies apply to the contents of this file.
+// Revision 0.01 - File Created
+// Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
 
