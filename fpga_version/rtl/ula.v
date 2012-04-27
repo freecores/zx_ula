@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company:        Dept. Architecture and Computing Technology. University of Seville
-// Engineer:       Miguel Angel Rodriguez Jodar
+// Engineer:       Miguel Angel Rodriguez Jodar. rodriguj@atc.us.es
 // 
 // Create Date:    19:13:39 4-Apr-2012 
-// Design Name:    ULA
-// Module Name:    ula_reference_design 
+// Design Name:    ZX Spectrum
+// Module Name:    ula 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -14,8 +14,8 @@
 // Dependencies: 
 //
 // Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
+// Revision 1.00 - File Created
+// Additional Comments: GPL License policies apply to the contents of this file.
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -258,13 +258,19 @@ module ula(
 		if (Border_n && (hc[3:0]==4'b1000 || hc[3:0]==4'b1001 || hc[3:0]==4'b1100 || hc[3:0]==4'b1101)) begin	// cycles 8 and 12: present display address to VRAM 
 			rVA = {1'b0,v[7:6],v[2:0],v[5:3],c[7:3]};						// (cycles 9 and 13 load display byte)
 			rVCS = 1;
-			rVOE = 1;
+			rVOE = !hc[0];
 			rVWE = 0;
 		end
 		else if (Border_n && (hc[3:0]==4'b1010 || hc[3:0]==4'b1011 || hc[3:0]==4'b1110 || hc[3:0]==4'b1111)) begin	// cycles 10 and 14: present attribute address to VRAM
 			rVA = {4'b0110,v[7:3],c[7:3]};										// (cycles 11 and 15 load attr byte)
 			rVCS = 1;
-			rVOE = 1;
+			rVOE = !hc[0];
+			rVWE = 0;
+		end
+		else if (Border_n && hc[3:0]==4'b0000) begin
+			rVA = a[13:0];
+			rVCS = 0;
+			rVOE = 0;
 			rVWE = 0;
 		end
 		else begin	// when VRAM is not in use by ULA, give it to CPU
@@ -303,19 +309,27 @@ module ula(
 	end
 	
 	// ULA-CPU interface
-	assign dout = (!a[15] & a[14] & !mreq_n)?         vramdout : // CPU reads VRAM through ULA as in the +3, not directly
-	              (!iorq_n & !a[0])?                  {1'b1,ear,1'b1,kbcolumns} :	// CPU reads keyboard and EAR state
-					  (Border_n)?                         vramdout :  // to emulate
-					                                      8'hFF;     // port FF
+	assign dout = (!a[15] & a[14] & !mreq_n)? vramdout : // CPU reads VRAM through ULA as in the +3, not directly
+	              (!iorq_n & !a[0])?          {1'b1,ear,1'b1,kbcolumns} :	// CPU reads keyboard and EAR state
+					  (Border_n)?                  AttrReg :  // to emulate
+					                              8'hFF;     // port FF
 	assign vramdin = din;		// The CPU doesn't need to share the memory input data bus with the ULA
-	assign kbrows = {a[11]? 1'bz : 0,	// high impedance or 0, as if diodes were been placed in between
-						  a[10]? 1'bz : 0,	// if the keyboard matrix is to be implemented within the FPGA, then
-						  a[9]?  1'bz : 0,	// there's no need to do this.
-						  a[12]? 1'bz : 0,
-						  a[13]? 1'bz : 0,
-						  a[8]?  1'bz : 0,
-						  a[14]? 1'bz : 0,
-						  a[15]? 1'bz : 0 };
+	assign kbrows = {a[11]? 1'bz : 1'b0,	// high impedance or 0, as if diodes were been placed in between
+						  a[10]? 1'bz : 1'b0,	// if the keyboard matrix is to be implemented within the FPGA, then
+						  a[9]?  1'bz : 1'b0,	// there's no need to do this.
+						  a[12]? 1'bz : 1'b0,
+						  a[13]? 1'bz : 1'b0,
+						  a[8]?  1'bz : 1'b0,
+						  a[14]? 1'bz : 1'b0,
+						  a[15]? 1'bz : 1'b0 };
+//	assign kbrows = {a[8]? 1'bz : 1'b0,	// high impedance or 0, as if diodes were been placed in between
+//						  a[9]? 1'bz : 1'b0,	// if the keyboard matrix is to be implemented within the FPGA, then
+//						  a[10]?  1'bz : 1'b0,	// there's no need to do this.
+//						  a[11]? 1'bz : 1'b0,
+//						  a[12]? 1'bz : 1'b0,
+//						  a[13]?  1'bz : 1'b0,
+//						  a[14]? 1'bz : 1'b0,
+//						  a[15]? 1'bz : 1'b0 };
 	reg rMic = 0;
 	reg rSpk = 0;
 	assign mic = rMic;
