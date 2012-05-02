@@ -22,10 +22,11 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
-module test_standard_ula;
+module test_ulaplus;
 
 	// Inputs
 	reg clk14;
+	reg reset;
 	wire [15:0] a;
 	wire [7:0] din;
 	wire mreq_n;
@@ -52,11 +53,14 @@ module test_standard_ula;
 	wire g;
 	wire b;
 	wire i;
+	wire [7:0] rgbulaplus;
+	wire ulaplus_enabled;
 	wire csync;
 
 	// Instantiate the Unit Under Test (UUT)
-	ula uut (
+	ulaplus uut (
 		.clk14(clk14), 
+		.reset(reset),
 		.a(a), 
 		.din(din), 
 		.dout(dout), 
@@ -82,6 +86,8 @@ module test_standard_ula;
 		.g(g), 
 		.b(b), 
 		.i(i), 
+		.rgbulaplus(rgbulaplus),
+		.ulaplus_enabled(ulaplus_enabled),
 		.csync(csync)
 	);
 
@@ -101,9 +107,12 @@ module test_standard_ula;
 		vramdout = 8'b01010101;
 		ear = 0;
 		kbcolumns = 0;
+		reset = 1;
+		reset = #20 0;
 	end
 	
 	always begin
 		clk14 = #35.714286 ~clk14;
 	end      
+	
 endmodule
